@@ -71,10 +71,43 @@ GROUP BY activity_date ;
 | 2019-07-20 | 2            |
 | 2019-07-21 | 2            |
 ```
+<br> 
 
+---
 
+## 3단계 - 놓친 것들 
+> 최종 정답쿼리 인줄 알았으나 submit해보니 아니었다.  
+> 30일 범위 지정하는 함수에서 날짜포함,미포함에 관련된 문제였다.  
 
+### (1)문제 요구사항
+> for a period of 30 days ending 2019-07-27 inclusively.
+- inclusively : 양 끝 경계의 수치나 날짜를 범위에 포함하여
+- 즉, 2019-07-27(끝) 날짜를 포함해서 30일동안!
 
+### (2)적용
+**a.계산:**
+- 2019-07-27 (1일) 
+- + 이전 29일
+- = 총 30일
+시작일 = (2019-07-27 - 29 Day) = 2019-06-28
+
+**b.쿼리적용:**
+```
+WHERE activity_date BETWEEN DATE_SUB('2019-07-27', INTERVAL 29 DAY) 
+                        AND '2019-07-27'
+```
+<br>
+
+ 
+### 정답 쿼리
+```
+SELECT 
+    activity_date AS day
+    ,COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE activity_date between DATE_SUB('2019-07-27', Interval 29 DAY) and '2019-07-27'
+GROUP BY activity_date ;
+```
 
 <br><br>
 
