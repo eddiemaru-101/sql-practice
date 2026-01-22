@@ -1,3 +1,57 @@
+> GROUP BY 치고 HAVING으로 필터링하면 될거 같았는데 안되네..
+
+## 1단계
+> HAVING절에는 집계함수로만 표현할 수 있다  
+> 
+```
+SELECT
+    employee_id
+    ,department_id
+FROM Employee
+GROUP BY employee_id
+HAVING COUNT(department_id) = 1 
+OR primary_flag = "Y";
+```
+- `OR primary_flag = "Y"`은 집계함수를 사용하지 않았으므로 실행불가
+
+## 2단계 
+> 지금 필요한 필터링 조건은 두가지이다.
+> 1) department_id가 하나인 경우  
+> 2) department_id가 두 개 이상이고, primary_flag=Y인 경우  
+> WHERE 절에서 OR로 조건 두개 걸면 안되나? NO, groupby쳐야 집계함수써서 두번째조건 확인가능하므로 WHERE절에 두번째 조건 못넣음  
+
+> 접근법을 바꿔야함! 
+```
+(조건1) UNION ALL (조건2)   
+```
+- 적용하면,
+
+```
+# Write your MySQL query statement below
+SELECT 
+    employee_id
+    , department_id
+FROM Employee
+WHERE primary_flag ='Y'
+
+UNION ALL
+
+SELECT 
+    employee_id
+    , department_id
+FROM Employee
+GROUP BY employee_id
+HAVING COUNT(department_id) = 1;
+
+<result>
+| employee_id | department_id |
+| ----------- | ------------- |
+| 2           | 1             |
+| 4           | 3             |
+| 1           | 1             |
+| 3           | 3             |
+```
+
 <br><br><br> 
 
 ---
