@@ -119,10 +119,63 @@ GROUP BY c.category;
 | Average Salary | 0              |
 | High Salary    | 3              |
 ```
+> 어떻게 ? 
+
+```
+WITH categories AS (
+    SELECT 'Low Salary' as category
+    UNION
+    SELECT 'Average Salary'
+    UNION
+    SELECT 'High Salary'
+)
+SELECT * FROM categories;
+
+-- 실행하면:
+| category       |
+| -------------- |
+| Low Salary     |
+| Average Salary |
+| High Salary    |
+```
+```
+WITH categorized_accounts AS (
+    SELECT 
+        CASE 
+            WHEN income < 20000 THEN 'Low Salary'
+            WHEN income BETWEEN 20000 AND 50000 THEN 'Average Salary'
+            ELSE 'High Salary'
+        END as category
+    FROM Accounts
+)
+SELECT * FROM categorized_accounts;
 
 
+-- 실행하면:
+| category    |
+| ----------- |
+| High Salary |  -- account_id 3
+| Low Salary  |  -- account_id 2
+| High Salary |  -- account_id 8
+| High Salary |  -- account_id 6
+```
+```
+SELECT 
+    c.category,
+    COUNT(ca.category) as accounts_count
+FROM categories c
+LEFT JOIN categorized_accounts ca ON c.category = ca.category
+GROUP BY c.category;
 
+-- 조인 후 상태를 생각해보면:
 
+categories         categorized_accounts
+| Low Salary    |  JOIN  | Low Salary  |     -- 매칭 1개
+| Average Salary|  JOIN  | NULL        |     -- 매칭 0개
+| High Salary   |  JOIN  | High Salary |     -- 매칭 3개
+                         | High Salary |
+                         | High Salary |
+```
 
 
 
